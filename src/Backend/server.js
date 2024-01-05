@@ -1,211 +1,46 @@
-// server.js
-// const express = require('express');
-// const http = require('http');
-// const socketIo = require('socket.io');
-// const fs = require('fs');
-// const cors = require('cors');
-
-// const app = express();
-// const server = http.createServer(app);
-// const io = socketIo(server);
-
-// const PORT = process.env.PORT || 3001;
-
-// app.use(cors());
-
-// // Serve your React app (assuming it's built and in the 'client/build' directory)
-// app.use(express.static('client/build'));
-
-// // Socket.IO connection
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-
-//   // Read JSON file and emit data to connected clients
-//   fs.readFile('path/to/your/data.json', 'utf8', (err, data) => {
-//     if (err) {
-//       console.error('Error reading JSON file:', err);
-//       return;
-//     }
-
-//     const jsonData = JSON.parse(data);
-
-//     // Emit data to the connected clients
-//     socket.emit('updateChartData', jsonData);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-// const express = require('express');
-// const http = require('http');
-// const socketIo = require('socket.io');
-// const fs = require('fs');
-// const cors = require('cors');
-// const multer = require('multer');
-
-// const app = express();
-// const server = http.createServer(app);
-// const io = socketIo(server);
-
-// const PORT = process.env.PORT || 3001;
-
-// app.use(cors());
-
-// // Serve your React app (assuming it's built and in the 'client/build' directory)
-// app.use(express.static('client/build'));
-
-// // Socket.IO connection
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-
-//   // Read JSON file and emit data to connected clients
-//   const jsonFilePath = 'path/to/your/data.json'; // Provide the correct path
-//   fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-//     if (err) {
-//       console.error('Error reading JSON file:', err);
-//       return;
-//     }
-
-//     const jsonData = JSON.parse(data);
-
-//     // Emit data to the connected clients
-//     socket.emit('updateChartData', jsonData);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
-
-// // Setup Multer for handling file uploads
-// const storage = multer.memoryStorage(); // Save file as Buffer in memory
-// const upload = multer({ storage: storage });
-
-// // Endpoint for uploading JSON file
-// app.post('/upload', upload.single('file'), (req, res) => {
-//   try {
-//     const jsonData = JSON.parse(req.file.buffer.toString());
-    
-//     // Emit data to connected clients
-//     io.sockets.emit('updateChartData', jsonData);
-
-//     res.status(200).json({ message: 'File uploaded successfully' });
-//   } catch (error) {
-//     console.error('Error parsing JSON file:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-// const express = require('express');
-// const http = require('http');
-// const socketIo = require('socket.io');
-// const fs = require('fs');
-// const cors = require('cors');
-// const multer = require('multer');
-// import data from './jsondata.json'
-
-// const app = express();
-// const server = http.createServer(app);
-// const io = socketIo(server);
-
-// const PORT = process.env.PORT || 3001;
-
-// app.use(cors());
-
-// // Serve your React app (assuming it's built and in the 'client/build' directory)
-// app.use(express.static('client/build'));
-
-// // Socket.IO connection
-// io.on('connection', (socket) => {
-//   console.log('Client connected');
-
-//   // Read JSON file and emit data to connected clients
-//   const jsonFilePath = data; // Provide the correct path
-//   fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-//     if (err) {
-//       console.error('Error reading JSON file:', err);
-//       return;
-//     }
-
-//     const jsonData = JSON.parse(data);
-
-//     // Emit data to the connected clients
-//     io.emit('updateChartData', jsonData); // Change to io.emit to broadcast to all clients
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Client disconnected');
-//   });
-// });
-
-// // Setup Multer for handling file uploads
-// const storage = multer.memoryStorage(); // Save file as Buffer in memory
-// const upload = multer({ storage: storage });
-
-// // Endpoint for uploading JSON file
-// app.post('/upload', upload.single('file'), (req, res) => {
-//   try {
-//     const jsonData = JSON.parse(req.file.buffer.toString());
-    
-//     // Emit data to all connected clients
-//     io.emit('updateChartData', jsonData);
-
-//     res.status(200).json({ message: 'File uploaded successfully' });
-//   } catch (error) {
-//     console.error('Error parsing JSON file:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const fs = require('fs');
-const cors = require('cors');
-const multer = require('multer');
+const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const fs = require("fs");
+const cors = require("cors");
+const multer = require("multer");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+
+const io = socketIo(server, {
+  cors: {
+    origins: ["http://localhost:3000"],
+  },
+});
 
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 
 // Serve your React app (assuming it's built and in the 'client/build' directory)
-app.use(express.static('client/build'));
+app.use(express.static("client/build"));
 
 // Socket.IO connection
-io.on('connection', (socket) => {
-  console.log('Client connected');
+io.on("connection", (socket) => {
+  console.log("Client connected");
 
   // Read JSON file and emit data to connected clients
-  const jsonFilePath = 'jsondata.json'; // Provide the correct path
-  fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+  const jsonFilePath = "jsondata.json"; // Provide the correct path
+  fs.readFile(jsonFilePath, "utf8", (err, data) => {
     if (err) {
-      console.error('Error reading JSON file:', err);
+      console.error("Error reading JSON file:", err);
       return;
     }
 
     const jsonData = JSON.parse(data);
 
     // Emit data to the connected clients
-    io.emit('updateChartData', jsonData);
+    io.emit("updateChartData", jsonData);
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
   });
 });
 
@@ -214,17 +49,17 @@ const storage = multer.memoryStorage(); // Save file as Buffer in memory
 const upload = multer({ storage: storage });
 
 // Endpoint for uploading JSON file
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post("/upload", upload.single("file"), (req, res) => {
   try {
     const jsonData = JSON.parse(req.file.buffer.toString());
 
     // Emit data to connected clients
-    io.emit('updateChartData', jsonData);
+    io.emit("updateChartData", jsonData);
 
-    res.status(200).json({ message: 'File uploaded successfully' });
+    res.status(200).json({ message: "File uploaded successfully" });
   } catch (error) {
-    console.error('Error parsing JSON file:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error parsing JSON file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
